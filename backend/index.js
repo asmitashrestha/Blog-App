@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-// const mongoose = require('mongoose');
 const blogRouter = require('./route/BlogRoute');
 
 require('./db')
@@ -11,7 +10,7 @@ app.use(express.json());
 
 app.use('/blogs', blogRouter)
 
-app.get('/',(req,res)=>{
+app.use('/',(req,res)=>{
   res.send("Home page")
 })
 

@@ -1,21 +1,32 @@
 import React, { useContext, useEffect } from "react";
 import { GlobalContext } from "../context";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from 'axios'
 
 const AddToBlog = () => {
-  const { formData, setFormData } = useContext(GlobalContext);
+  const { formData, setFormData, isEdit, setIsEdit } = useContext(GlobalContext);
 
   const navigate = useNavigate();
+  const location = useLocation()
+
   const handleClick = async () => {
     try {
-      const response = await axios.post("http://localhost:8000/blogs/add", {
+      const response =  isEdit
+      ? await axios.put(
+          `http://localhost:8000/blogs/update/${location.state.getCurrentId._id}`,
+          {
+            title: formData.title,
+            description: formData.description,
+          }
+        )
+      : await axios.post("http://localhost:8000/blogs/add", {
         title: formData.title,
         description: formData.description,
       });
       const data = await response.data();
       console.log(data);
       if(data){
+        setIsEdit(false)
         setFormData({
           title:'',
           description:''
@@ -27,11 +38,21 @@ const AddToBlog = () => {
     }
   };
 
-
+useEffect(()=>{
+  console.log(location);
+  if(location.state) {
+    const { getCurrentId} = location.state;
+    setIsEdit(true)
+    setFormData({
+      title : getCurrentId.title,
+      description : getCurrentId.description,
+    })
+  }
+},[location])
 
   return (
     <div className="blogcontainer">
-      <h1>Add To Blog</h1>
+      <h1>{isEdit? "Edit a Blog" : "Add To Blog"}</h1>
       <div className="form-container">
         <form action="">
           <div className="inp-text">
@@ -65,7 +86,7 @@ const AddToBlog = () => {
             ></textarea>
           </div>
           <div className="btn-add">
-            <button onClick={handleClick}>Add New Blog</button>
+            <button onClick={handleClick}>{isEdit ? "Edit a Blog" :"Add To Blog"}</button>
           </div>
         </form>
       </div>

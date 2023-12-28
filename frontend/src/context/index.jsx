@@ -10,7 +10,9 @@ export default function GlobalState({children}){
   })
 
   const [blogList, setBlogList] = useState([]);
-  return <GlobalContext.Provider value={{formData, setFormData,blogList, setBlogList}}>
+  const [isEdit, setIsEdit] = useState(false)
+
+  return <GlobalContext.Provider value={{isEdit, setIsEdit,formData, setFormData,blogList, setBlogList}}>
     {children}
   </GlobalContext.Provider>
 }

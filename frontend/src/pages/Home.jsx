@@ -2,10 +2,14 @@ import React, { useContext, useEffect } from "react";
 import { GlobalContext } from "../context";
 import axios from "axios";
 import { FaEdit, FaTrash } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const { formData, setFormData, blogList, setBlogList } =
     useContext(GlobalContext);
+
+    const navigate = useNavigate()
+
   const fetchListofBlog = async () => {
     try {
       const response = await axios.get(`http://localhost:8000/blogs`);
@@ -27,7 +31,7 @@ const Home = () => {
       `http://localhost:8000/blogs/delete/${getCurrentId}`
     );
 
-    const data =await response.data; //
+    const data =await response.data; 
     if (data?.msg) {
       fetchListofBlog();
     }
@@ -35,6 +39,7 @@ const Home = () => {
 
   const handleEdit = (getCurrentId) => {
     console.log(getCurrentId);
+    navigate('/blog', {state: {getCurrentId}})
   };
 
   useEffect(() => {
@@ -52,8 +57,8 @@ const Home = () => {
         <div className="bloglist" key={index}>
           <p>{blogItem.title}</p>
           <p>{blogItem.description}</p>
-          <FaEdit onClick={handleEdit} size={30} />
-          <FaTrash onClick={handleDelete} size={30} />
+          <FaEdit onClick={() =>handleEdit(blogItem)} size={30} />
+          <FaTrash onClick={() => handleDelete(blogItem._id)} size={30} />
         </div>
       ))}
     </div>
